@@ -178,10 +178,10 @@ RSpec.describe Tapioca::Dsl::Compilers::StoreModel, type: :integration do
           # typed: strong
 
           class User
-            sig { returns(T::Array[Preference]) }
+            sig { returns(T.nilable(T::Array[Preference])) }
             def preferences; end
 
-            sig { params(value: T.nilable(T.any(T::Array[Preference], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T::Array[Preference]) }
+            sig { params(value: T.nilable(T.any(T::Array[Preference], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T.nilable(T::Array[Preference])) }
             def preferences=(value); end
           end
         RBI
@@ -231,10 +231,10 @@ RSpec.describe Tapioca::Dsl::Compilers::StoreModel, type: :integration do
             sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(UserSettings) }
             def build_settings(attributes: {}); end
 
-            sig { returns(T::Array[Preference]) }
+            sig { returns(T.nilable(T::Array[Preference])) }
             def preferences; end
 
-            sig { params(value: T.nilable(T.any(T::Array[Preference], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T::Array[Preference]) }
+            sig { params(value: T.nilable(T.any(T::Array[Preference], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T.nilable(T::Array[Preference])) }
             def preferences=(value); end
           end
         RBI
@@ -470,16 +470,16 @@ RSpec.describe Tapioca::Dsl::Compilers::StoreModel, type: :integration do
             sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(ComplexModel) }
             def build_complex(attributes: {}); end
 
-            sig { returns(T::Array[SimpleModel]) }
+            sig { returns(T.nilable(T::Array[SimpleModel])) }
             def array_simple; end
 
-            sig { params(value: T.nilable(T.any(T::Array[SimpleModel], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T::Array[SimpleModel]) }
+            sig { params(value: T.nilable(T.any(T::Array[SimpleModel], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T.nilable(T::Array[SimpleModel])) }
             def array_simple=(value); end
 
-            sig { returns(T::Array[ComplexModel]) }
+            sig { returns(T.nilable(T::Array[ComplexModel])) }
             def array_complex; end
 
-            sig { params(value: T.nilable(T.any(T::Array[ComplexModel], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T::Array[ComplexModel]) }
+            sig { params(value: T.nilable(T.any(T::Array[ComplexModel], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T.nilable(T::Array[ComplexModel])) }
             def array_complex=(value); end
           end
         RBI
@@ -571,10 +571,10 @@ RSpec.describe Tapioca::Dsl::Compilers::StoreModel, type: :integration do
             sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(StoreModel::Model) }
             def build_dynamic_content(attributes: {}); end
 
-            sig { returns(T::Array[StoreModel::Model]) }
+            sig { returns(T.nilable(T::Array[StoreModel::Model])) }
             def dynamic_list; end
 
-            sig { params(value: T.nilable(T.any(T::Array[StoreModel::Model], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T::Array[StoreModel::Model]) }
+            sig { params(value: T.nilable(T.any(T::Array[StoreModel::Model], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T.nilable(T::Array[StoreModel::Model])) }
             def dynamic_list=(value); end
           end
         RBI

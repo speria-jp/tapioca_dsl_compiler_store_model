@@ -140,17 +140,20 @@ module Tapioca
         sig { params(mod: T.untyped, attribute_name: String).void }
         def create_one_of_array_methods(mod, attribute_name)
           # OneOf array types are dynamically resolved
+          array_type = "T::Array[StoreModel::Model]"
+          nilable_array_type = "T.nilable(#{array_type})"
+
           mod.create_method(
             attribute_name,
-            return_type: "T::Array[StoreModel::Model]"
+            return_type: nilable_array_type
           )
 
           mod.create_method(
             "#{attribute_name}=",
             parameters: [create_param("value",
-                                      type: "T.nilable(T.any(T::Array[StoreModel::Model], " \
+                                      type: "T.nilable(T.any(#{array_type}, " \
                                             "T::Array[T::Hash[T.untyped, T.untyped]]))")],
-            return_type: "T::Array[StoreModel::Model]"
+            return_type: nilable_array_type
           )
         end
 
@@ -181,10 +184,11 @@ module Tapioca
         def create_many_store_model_methods(mod, attribute_name, model_klass)
           return_type = model_klass.name
           array_type = "T::Array[#{return_type}]"
+          nilable_array_type = "T.nilable(#{array_type})"
 
           mod.create_method(
             attribute_name,
-            return_type: array_type
+            return_type: nilable_array_type
           )
 
           mod.create_method(
@@ -192,7 +196,7 @@ module Tapioca
             parameters: [create_param("value",
                                       type: "T.nilable(T.any(#{array_type}, " \
                                             "T::Array[T::Hash[T.untyped, T.untyped]]))")],
-            return_type: array_type
+            return_type: nilable_array_type
           )
         end
       end
