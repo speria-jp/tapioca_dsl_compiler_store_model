@@ -2,15 +2,6 @@
 
 A [Tapioca](https://github.com/Shopify/tapioca) DSL compiler that generates RBI files for [StoreModel](https://github.com/DmitryTsepelev/store_model) attributes in ActiveRecord models.
 
-StoreModel adds JSON-backed attributes to ActiveRecord models, and this gem provides Sorbet type signatures for the methods that StoreModel dynamically generates.
-
-## Features
-
-- **Automatic RBI Generation**: Generates Sorbet RBI files for StoreModel attributes
-- **Comprehensive Type Coverage**: Supports both single and array StoreModel types
-- **Build Methods**: Generates signatures for `build_*` methods created by StoreModel
-- **Tapioca Integration**: Follows Tapioca's standard compiler patterns and is automatically discovered
-
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -33,7 +24,7 @@ $ gem install tapioca_dsl_compiler_store_model
 
 ## Usage
 
-Once installed, Tapioca will automatically discover and use the `Tapioca::Dsl::Compilers::StoreModel` compiler when generating RBI files for ActiveRecord models that use StoreModel attributes.
+Once installed, Tapioca will automatically discover and use this compiler when generating RBI files with `bundle exec tapioca dsl`.
 
 ### Example
 
@@ -117,10 +108,9 @@ These features may be added in future versions.
 
 ## Requirements
 
-- Ruby 2.7+
-- [Tapioca](https://github.com/Shopify/tapioca) 0.10+
+- Ruby 3.2+
+- [Tapioca](https://github.com/Shopify/tapioca) 0.11+
 - [StoreModel](https://github.com/DmitryTsepelev/store_model) 1.0+
-- ActiveRecord 6.0+
 
 ## Development
 
