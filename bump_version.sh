@@ -98,6 +98,13 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     update_files "$NEW_VERSION"
     echo "Version updated to $NEW_VERSION"
+    
+    # Update Gemfile.lock if gem references itself
+    if grep -q "remote: \." Gemfile.lock 2>/dev/null; then
+        echo "Updating Gemfile.lock..."
+        bundle update tapioca_dsl_compiler_store_model
+    fi
+    
     echo "Don't forget to:"
     echo "  1. git add -A"
     echo "  2. git commit -m 'Bump version to $NEW_VERSION'"
