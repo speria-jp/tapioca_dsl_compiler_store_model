@@ -5,8 +5,6 @@ module Tapioca
   module Dsl
     module Compilers
       class StoreModel < Tapioca::Dsl::Compiler
-        ConstantType = type_member { { fixed: T.class_of(ActiveRecord::Base) } }
-
         sig { override.returns(T::Enumerable[Module]) }
         def self.gather_constants
           return [] unless defined?(::StoreModel)
