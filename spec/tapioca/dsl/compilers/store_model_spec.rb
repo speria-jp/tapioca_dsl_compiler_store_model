@@ -609,6 +609,246 @@ RSpec.describe Tapioca::Dsl::Compilers::StoreModel, type: :integration do
         expect(actual).to eq(expected)
       end
     end
+
+    # When a model declares `attribute :foo, SomeStoreModel.to_type` to get the
+    # cast/dirty-tracking machinery but then redefines `foo` or `foo=` (commonly
+    # with `delegate` or a plain `def` that calls `super`), Tapioca should not
+    # emit a sig whose arity disagrees with the user's actual method. Sorbet
+    # flags such mismatches as 4010 "redefined without matching argument
+    # count" errors. The compiler detects user overrides via the method's
+    # `owner` — Rails-generated accessors live on `GeneratedAttributeMethods`,
+    # user overrides live on the model class itself.
+    context "with user-overridden methods" do
+      context "when only the setter is overridden via def" do
+        before do
+          add_ruby_file("override_setter.rb", <<~RUBY)
+            class UserSettings
+              include StoreModel::Model
+              attribute :theme, :string
+            end
+
+            class User < ActiveRecord::Base
+              attribute :settings, UserSettings.to_type
+
+              def settings=(value)
+                super
+              end
+            end
+          RUBY
+        end
+
+        it "skips the setter but emits getter and builder" do
+          expected = <<~RBI
+            # typed: strong
+
+            class User
+              sig { returns(T.nilable(::UserSettings)) }
+              def settings; end
+
+              sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(::UserSettings) }
+              def build_settings(attributes: {}); end
+            end
+          RBI
+
+          expect(rbi_for(:User)).to eq(expected)
+        end
+      end
+
+      context "when the getter is overridden via delegate" do
+        before do
+          add_ruby_file("override_via_delegate.rb", <<~RUBY)
+            class UserSettings
+              include StoreModel::Model
+              attribute :theme, :string
+            end
+
+            class SettingsHolder
+              attr_accessor :settings
+            end
+
+            class User < ActiveRecord::Base
+              attribute :settings, UserSettings.to_type
+
+              def holder
+                @holder ||= SettingsHolder.new
+              end
+
+              delegate :settings, to: :holder
+            end
+          RUBY
+        end
+
+        it "skips the delegated getter but emits setter and builder" do
+          expected = <<~RBI
+            # typed: strong
+
+            class User
+              sig { params(value: T.nilable(T.any(::UserSettings, T::Hash[T.untyped, T.untyped]))).returns(T.nilable(::UserSettings)) }
+              def settings=(value); end
+
+              sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(::UserSettings) }
+              def build_settings(attributes: {}); end
+            end
+          RBI
+
+          expect(rbi_for(:User)).to eq(expected)
+        end
+      end
+
+      context "when both getter and setter are overridden" do
+        before do
+          add_ruby_file("override_both.rb", <<~RUBY)
+            class UserSettings
+              include StoreModel::Model
+              attribute :theme, :string
+            end
+
+            class User < ActiveRecord::Base
+              attribute :settings, UserSettings.to_type
+
+              def settings
+                super
+              end
+
+              def settings=(value)
+                super
+              end
+            end
+          RUBY
+        end
+
+        it "emits only the builder" do
+          expected = <<~RBI
+            # typed: strong
+
+            class User
+              sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(::UserSettings) }
+              def build_settings(attributes: {}); end
+            end
+          RBI
+
+          expect(rbi_for(:User)).to eq(expected)
+        end
+      end
+
+      context "when a many-association method is overridden" do
+        before do
+          add_ruby_file("override_many.rb", <<~RUBY)
+            class Preference
+              include StoreModel::Model
+              attribute :key, :string
+            end
+
+            class PreferenceHolder
+              attr_accessor :preferences
+            end
+
+            class User < ActiveRecord::Base
+              attribute :preferences, Preference.to_array_type
+
+              def holder
+                @holder ||= PreferenceHolder.new
+              end
+
+              delegate :preferences, to: :holder
+            end
+          RUBY
+        end
+
+        it "skips only the overridden method" do
+          expected = <<~RBI
+            # typed: strong
+
+            class User
+              sig { params(value: T.nilable(T.any(T::Array[::Preference], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T.nilable(T::Array[::Preference])) }
+              def preferences=(value); end
+            end
+          RBI
+
+          expect(rbi_for(:User)).to eq(expected)
+        end
+      end
+
+      context "when a one_of method is overridden" do
+        before do
+          ActiveRecord::Schema.define do
+            create_table :one_of_override_users do |t|
+              t.text :dynamic_content
+              t.timestamps
+            end
+          end
+
+          add_ruby_file("override_one_of.rb", <<~RUBY)
+            class TextContent
+              include StoreModel::Model
+              attribute :text, :string
+            end
+
+            DynamicContent = StoreModel.one_of do |json|
+              TextContent
+            end
+
+            class OneOfOverrideUser < ActiveRecord::Base
+              attribute :dynamic_content, DynamicContent.to_type
+
+              def dynamic_content=(value)
+                super
+              end
+            end
+          RUBY
+        end
+
+        it "skips the overridden setter but emits getter and builder" do
+          expected = <<~RBI
+            # typed: strong
+
+            class OneOfOverrideUser
+              sig { returns(T.nilable(StoreModel::Model)) }
+              def dynamic_content; end
+
+              sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(StoreModel::Model) }
+              def build_dynamic_content(attributes: {}); end
+            end
+          RBI
+
+          expect(rbi_for(:OneOfOverrideUser)).to eq(expected)
+        end
+      end
+
+      context "when an attribute is declared but no methods are overridden" do
+        before do
+          add_ruby_file("no_override.rb", <<~RUBY)
+            class UserSettings
+              include StoreModel::Model
+              attribute :theme, :string
+            end
+
+            class User < ActiveRecord::Base
+              attribute :settings, UserSettings.to_type
+            end
+          RUBY
+        end
+
+        it "emits the full set of sigs" do
+          expected = <<~RBI
+            # typed: strong
+
+            class User
+              sig { returns(T.nilable(::UserSettings)) }
+              def settings; end
+
+              sig { params(value: T.nilable(T.any(::UserSettings, T::Hash[T.untyped, T.untyped]))).returns(T.nilable(::UserSettings)) }
+              def settings=(value); end
+
+              sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(::UserSettings) }
+              def build_settings(attributes: {}); end
+            end
+          RBI
+
+          expect(rbi_for(:User)).to eq(expected)
+        end
+      end
+    end
   end
 
   describe "compiler class basics" do

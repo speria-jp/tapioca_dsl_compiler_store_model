@@ -118,19 +118,22 @@ module Tapioca
         sig { params(mod: T.untyped, attribute_name: String).void }
         def create_one_of_single_methods(mod, attribute_name)
           # OneOf types are dynamically resolved, so we use generic StoreModel::Model types
-          mod.create_method(
+          create_method_unless_overridden(
+            mod,
             attribute_name,
             return_type: "T.nilable(StoreModel::Model)"
           )
 
-          mod.create_method(
+          create_method_unless_overridden(
+            mod,
             "#{attribute_name}=",
             parameters: [create_param("value",
                                       type: "T.nilable(T.any(StoreModel::Model, T::Hash[T.untyped, T.untyped]))")],
             return_type: "T.nilable(StoreModel::Model)"
           )
 
-          mod.create_method(
+          create_method_unless_overridden(
+            mod,
             "build_#{attribute_name}",
             parameters: [create_kw_opt_param("attributes", type: "T::Hash[T.untyped, T.untyped]", default: "{}")],
             return_type: "StoreModel::Model"
@@ -143,12 +146,14 @@ module Tapioca
           array_type = "T::Array[StoreModel::Model]"
           nilable_array_type = "T.nilable(#{array_type})"
 
-          mod.create_method(
+          create_method_unless_overridden(
+            mod,
             attribute_name,
             return_type: nilable_array_type
           )
 
-          mod.create_method(
+          create_method_unless_overridden(
+            mod,
             "#{attribute_name}=",
             parameters: [create_param("value",
                                       type: "T.nilable(T.any(#{array_type}, " \
@@ -161,19 +166,22 @@ module Tapioca
         def create_single_store_model_methods(mod, attribute_name, model_klass)
           return_type = "::#{model_klass.name}"
 
-          mod.create_method(
+          create_method_unless_overridden(
+            mod,
             attribute_name,
             return_type: "T.nilable(#{return_type})"
           )
 
-          mod.create_method(
+          create_method_unless_overridden(
+            mod,
             "#{attribute_name}=",
             parameters: [create_param("value",
                                       type: "T.nilable(T.any(#{return_type}, T::Hash[T.untyped, T.untyped]))")],
             return_type: "T.nilable(#{return_type})"
           )
 
-          mod.create_method(
+          create_method_unless_overridden(
+            mod,
             "build_#{attribute_name}",
             parameters: [create_kw_opt_param("attributes", type: "T::Hash[T.untyped, T.untyped]", default: "{}")],
             return_type: return_type
@@ -186,18 +194,55 @@ module Tapioca
           array_type = "T::Array[#{return_type}]"
           nilable_array_type = "T.nilable(#{array_type})"
 
-          mod.create_method(
+          create_method_unless_overridden(
+            mod,
             attribute_name,
             return_type: nilable_array_type
           )
 
-          mod.create_method(
+          create_method_unless_overridden(
+            mod,
             "#{attribute_name}=",
             parameters: [create_param("value",
                                       type: "T.nilable(T.any(#{array_type}, " \
                                             "T::Array[T::Hash[T.untyped, T.untyped]]))")],
             return_type: nilable_array_type
           )
+        end
+
+        # Emit a method sig unless the user has redefined that method on the
+        # model class itself (via `def`, `delegate`, `define_method`, etc.).
+        #
+        # Background: `attribute :foo, SomeStoreModel.to_type` causes Rails to
+        # generate `foo` / `foo=` on an internal `GeneratedAttributeMethods`
+        # module that is included in the model. When the user overrides one
+        # of those — typically via `delegate :foo, to: :bar` (which produces a
+        # `*args, **kwargs, &block` method) — the rbi sig we'd otherwise emit
+        # has a different arity from the user's actual method, and Sorbet
+        # rejects it with a 4010 "redefined without matching argument count"
+        # error.
+        #
+        # An overridden method's `owner` is the constant itself, while a
+        # Rails-generated accessor's `owner` is the included
+        # `GeneratedAttributeMethods` module (or similar). We use that to
+        # detect overrides and skip emission so Sorbet can infer the type
+        # from the user's implementation.
+        sig { params(mod: T.untyped, name: T.any(String, Symbol), kwargs: T.untyped).void }
+        def create_method_unless_overridden(mod, name, **kwargs)
+          return if user_overridden?(name)
+
+          mod.create_method(name.to_s, **kwargs)
+        end
+
+        sig { params(method_name: T.any(String, Symbol)).returns(T::Boolean) }
+        def user_overridden?(method_name)
+          name = method_name.to_sym
+          return false unless constant.method_defined?(name) ||
+                              constant.private_method_defined?(name)
+
+          constant.instance_method(name).owner == constant
+        rescue NameError
+          false
         end
       end
     end
