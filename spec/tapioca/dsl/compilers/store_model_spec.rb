@@ -137,13 +137,13 @@ RSpec.describe Tapioca::Dsl::Compilers::StoreModel, type: :integration do
           # typed: strong
 
           class User
-            sig { returns(T.nilable(UserSettings)) }
+            sig { returns(T.nilable(::UserSettings)) }
             def settings; end
 
-            sig { params(value: T.nilable(T.any(UserSettings, T::Hash[T.untyped, T.untyped]))).returns(T.nilable(UserSettings)) }
+            sig { params(value: T.nilable(T.any(::UserSettings, T::Hash[T.untyped, T.untyped]))).returns(T.nilable(::UserSettings)) }
             def settings=(value); end
 
-            sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(UserSettings) }
+            sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(::UserSettings) }
             def build_settings(attributes: {}); end
           end
         RBI
@@ -178,10 +178,10 @@ RSpec.describe Tapioca::Dsl::Compilers::StoreModel, type: :integration do
           # typed: strong
 
           class User
-            sig { returns(T.nilable(T::Array[Preference])) }
+            sig { returns(T.nilable(T::Array[::Preference])) }
             def preferences; end
 
-            sig { params(value: T.nilable(T.any(T::Array[Preference], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T.nilable(T::Array[Preference])) }
+            sig { params(value: T.nilable(T.any(T::Array[::Preference], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T.nilable(T::Array[::Preference])) }
             def preferences=(value); end
           end
         RBI
@@ -222,19 +222,19 @@ RSpec.describe Tapioca::Dsl::Compilers::StoreModel, type: :integration do
           # typed: strong
 
           class User
-            sig { returns(T.nilable(UserSettings)) }
+            sig { returns(T.nilable(::UserSettings)) }
             def settings; end
 
-            sig { params(value: T.nilable(T.any(UserSettings, T::Hash[T.untyped, T.untyped]))).returns(T.nilable(UserSettings)) }
+            sig { params(value: T.nilable(T.any(::UserSettings, T::Hash[T.untyped, T.untyped]))).returns(T.nilable(::UserSettings)) }
             def settings=(value); end
 
-            sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(UserSettings) }
+            sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(::UserSettings) }
             def build_settings(attributes: {}); end
 
-            sig { returns(T.nilable(T::Array[Preference])) }
+            sig { returns(T.nilable(T::Array[::Preference])) }
             def preferences; end
 
-            sig { params(value: T.nilable(T.any(T::Array[Preference], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T.nilable(T::Array[Preference])) }
+            sig { params(value: T.nilable(T.any(T::Array[::Preference], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T.nilable(T::Array[::Preference])) }
             def preferences=(value); end
           end
         RBI
@@ -270,13 +270,13 @@ RSpec.describe Tapioca::Dsl::Compilers::StoreModel, type: :integration do
           # typed: strong
 
           class User
-            sig { returns(T.nilable(UserSettings)) }
+            sig { returns(T.nilable(::UserSettings)) }
             def settings; end
 
-            sig { params(value: T.nilable(T.any(UserSettings, T::Hash[T.untyped, T.untyped]))).returns(T.nilable(UserSettings)) }
+            sig { params(value: T.nilable(T.any(::UserSettings, T::Hash[T.untyped, T.untyped]))).returns(T.nilable(::UserSettings)) }
             def settings=(value); end
 
-            sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(UserSettings) }
+            sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(::UserSettings) }
             def build_settings(attributes: {}); end
           end
         RBI
@@ -384,13 +384,13 @@ RSpec.describe Tapioca::Dsl::Compilers::StoreModel, type: :integration do
           # typed: strong
 
           class User
-            sig { returns(T.nilable(Profile)) }
+            sig { returns(T.nilable(::Profile)) }
             def profile; end
 
-            sig { params(value: T.nilable(T.any(Profile, T::Hash[T.untyped, T.untyped]))).returns(T.nilable(Profile)) }
+            sig { params(value: T.nilable(T.any(::Profile, T::Hash[T.untyped, T.untyped]))).returns(T.nilable(::Profile)) }
             def profile=(value); end
 
-            sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(Profile) }
+            sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(::Profile) }
             def build_profile(attributes: {}); end
           end
         RBI
@@ -452,34 +452,34 @@ RSpec.describe Tapioca::Dsl::Compilers::StoreModel, type: :integration do
           # typed: strong
 
           class VariationsUser
-            sig { returns(T.nilable(SimpleModel)) }
+            sig { returns(T.nilable(::SimpleModel)) }
             def simple; end
 
-            sig { params(value: T.nilable(T.any(SimpleModel, T::Hash[T.untyped, T.untyped]))).returns(T.nilable(SimpleModel)) }
+            sig { params(value: T.nilable(T.any(::SimpleModel, T::Hash[T.untyped, T.untyped]))).returns(T.nilable(::SimpleModel)) }
             def simple=(value); end
 
-            sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(SimpleModel) }
+            sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(::SimpleModel) }
             def build_simple(attributes: {}); end
 
-            sig { returns(T.nilable(ComplexModel)) }
+            sig { returns(T.nilable(::ComplexModel)) }
             def complex; end
 
-            sig { params(value: T.nilable(T.any(ComplexModel, T::Hash[T.untyped, T.untyped]))).returns(T.nilable(ComplexModel)) }
+            sig { params(value: T.nilable(T.any(::ComplexModel, T::Hash[T.untyped, T.untyped]))).returns(T.nilable(::ComplexModel)) }
             def complex=(value); end
 
-            sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(ComplexModel) }
+            sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(::ComplexModel) }
             def build_complex(attributes: {}); end
 
-            sig { returns(T.nilable(T::Array[SimpleModel])) }
+            sig { returns(T.nilable(T::Array[::SimpleModel])) }
             def array_simple; end
 
-            sig { params(value: T.nilable(T.any(T::Array[SimpleModel], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T.nilable(T::Array[SimpleModel])) }
+            sig { params(value: T.nilable(T.any(T::Array[::SimpleModel], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T.nilable(T::Array[::SimpleModel])) }
             def array_simple=(value); end
 
-            sig { returns(T.nilable(T::Array[ComplexModel])) }
+            sig { returns(T.nilable(T::Array[::ComplexModel])) }
             def array_complex; end
 
-            sig { params(value: T.nilable(T.any(T::Array[ComplexModel], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T.nilable(T::Array[ComplexModel])) }
+            sig { params(value: T.nilable(T.any(T::Array[::ComplexModel], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T.nilable(T::Array[::ComplexModel])) }
             def array_complex=(value); end
           end
         RBI

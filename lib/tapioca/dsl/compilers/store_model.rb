@@ -159,7 +159,7 @@ module Tapioca
 
         sig { params(mod: T.untyped, attribute_name: String, model_klass: T.untyped).void }
         def create_single_store_model_methods(mod, attribute_name, model_klass)
-          return_type = model_klass.name
+          return_type = "::#{model_klass.name}"
 
           mod.create_method(
             attribute_name,
@@ -182,7 +182,7 @@ module Tapioca
 
         sig { params(mod: T.untyped, attribute_name: String, model_klass: T.untyped).void }
         def create_many_store_model_methods(mod, attribute_name, model_klass)
-          return_type = model_klass.name
+          return_type = "::#{model_klass.name}"
           array_type = "T::Array[#{return_type}]"
           nilable_array_type = "T.nilable(#{array_type})"
 
