@@ -102,7 +102,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     # Update Gemfile.lock if gem references itself
     if grep -q "remote: \." Gemfile.lock 2>/dev/null; then
         echo "Updating Gemfile.lock..."
-        bundle update tapioca_dsl_compiler_store_model
+        bundle install
     fi
     
     echo "Don't forget to:"
