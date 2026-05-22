@@ -121,29 +121,29 @@ module Tapioca
           create_method_unless_overridden(
             mod,
             attribute_name,
-            return_type: "T.nilable(StoreModel::Model)"
+            return_type: "T.nilable(::StoreModel::Model)"
           )
 
           create_method_unless_overridden(
             mod,
             "#{attribute_name}=",
             parameters: [create_param("value",
-                                      type: "T.nilable(T.any(StoreModel::Model, T::Hash[T.untyped, T.untyped]))")],
-            return_type: "T.nilable(StoreModel::Model)"
+                                      type: "T.nilable(T.any(::StoreModel::Model, T::Hash[T.untyped, T.untyped]))")],
+            return_type: "T.nilable(::StoreModel::Model)"
           )
 
           create_method_unless_overridden(
             mod,
             "build_#{attribute_name}",
             parameters: [create_kw_opt_param("attributes", type: "T::Hash[T.untyped, T.untyped]", default: "{}")],
-            return_type: "StoreModel::Model"
+            return_type: "::StoreModel::Model"
           )
         end
 
         sig { params(mod: T.untyped, attribute_name: String).void }
         def create_one_of_array_methods(mod, attribute_name)
           # OneOf array types are dynamically resolved
-          array_type = "T::Array[StoreModel::Model]"
+          array_type = "T::Array[::StoreModel::Model]"
           nilable_array_type = "T.nilable(#{array_type})"
 
           create_method_unless_overridden(

@@ -562,19 +562,19 @@ RSpec.describe Tapioca::Dsl::Compilers::StoreModel, type: :integration do
           # typed: strong
 
           class OneOfUser
-            sig { returns(T.nilable(StoreModel::Model)) }
+            sig { returns(T.nilable(::StoreModel::Model)) }
             def dynamic_content; end
 
-            sig { params(value: T.nilable(T.any(StoreModel::Model, T::Hash[T.untyped, T.untyped]))).returns(T.nilable(StoreModel::Model)) }
+            sig { params(value: T.nilable(T.any(::StoreModel::Model, T::Hash[T.untyped, T.untyped]))).returns(T.nilable(::StoreModel::Model)) }
             def dynamic_content=(value); end
 
-            sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(StoreModel::Model) }
+            sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(::StoreModel::Model) }
             def build_dynamic_content(attributes: {}); end
 
-            sig { returns(T.nilable(T::Array[StoreModel::Model])) }
+            sig { returns(T.nilable(T::Array[::StoreModel::Model])) }
             def dynamic_list; end
 
-            sig { params(value: T.nilable(T.any(T::Array[StoreModel::Model], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T.nilable(T::Array[StoreModel::Model])) }
+            sig { params(value: T.nilable(T.any(T::Array[::StoreModel::Model], T::Array[T::Hash[T.untyped, T.untyped]]))).returns(T.nilable(T::Array[::StoreModel::Model])) }
             def dynamic_list=(value); end
           end
         RBI
@@ -803,10 +803,10 @@ RSpec.describe Tapioca::Dsl::Compilers::StoreModel, type: :integration do
             # typed: strong
 
             class OneOfOverrideUser
-              sig { returns(T.nilable(StoreModel::Model)) }
+              sig { returns(T.nilable(::StoreModel::Model)) }
               def dynamic_content; end
 
-              sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(StoreModel::Model) }
+              sig { params(attributes: T::Hash[T.untyped, T.untyped]).returns(::StoreModel::Model) }
               def build_dynamic_content(attributes: {}); end
             end
           RBI
